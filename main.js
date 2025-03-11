@@ -16,10 +16,10 @@ function addBook() {
     const bookTitle = document.getElementById('bookFormTitle').value;
     const bookAuthor = document.getElementById('bookFormAuthor').value;
     const bookYear = parseInt(document.getElementById('bookFormYear').value);
-    const isRead = document.getElementById('bookFormIsComplete').checked;
+    const isComplete = document.getElementById('bookFormIsComplete').checked;
 
     const generatedId = generateId();
-    const bookObject = generateBookObject(generatedId, bookTitle, bookAuthor, bookYear, isRead);
+    const bookObject = generateBookObject(generatedId, bookTitle, bookAuthor, bookYear, isComplete);
     books.push(bookObject);
 
     document.dispatchEvent(new Event(RENDER_BOOK));
@@ -31,13 +31,13 @@ function generateId() {
     return +new Date();
 }
 
-function generateBookObject(id, title, author, year, isRead) {
+function generateBookObject(id, title, author, year, isComplete) {
     return {
         id,
         title,
         author,
         year,
-        isRead
+        isComplete
     };
 }
 
@@ -50,7 +50,7 @@ document.addEventListener(RENDER_BOOK, () => {
 
     for (const bookItem of books) {
         const bookElement = makeBook(bookItem);
-        if (!bookItem.isRead) {
+        if (!bookItem.isComplete) {
             incompleteBook.append(bookElement);
         } else {
             completeBook.append(bookElement);
@@ -60,12 +60,15 @@ document.addEventListener(RENDER_BOOK, () => {
 
 function makeBook(bookObject) {
     const textTitle = document.createElement('h3');
+    textTitle.setAttribute('data-testid', 'bookItemTitle')
     textTitle.innerText = bookObject.title;
 
     const textAuthor = document.createElement('p');
+    textAuthor.setAttribute('data-testid', 'bookItemAuthor')
     textAuthor.innerText = `Penulis: ${bookObject.author}`;
 
     const textYear = document.createElement('p');
+    textYear.setAttribute('data-testid', 'bookItemYear')
     textYear.innerText = `Tahun: ${bookObject.year}`;
 
     const container = document.createElement('div');
@@ -73,7 +76,7 @@ function makeBook(bookObject) {
     container.setAttribute('id', `book-${bookObject.id}`);
     container.setAttribute('data-testid', 'bookItem');
 
-    if (bookObject.isRead) {
+    if (bookObject.isComplete) {
         const incompleteButton = document.createElement('button')
         incompleteButton.setAttribute('data-testid', 'bookItemIsCompleteButton')
         incompleteButton.innerText = "Belum Selesai Dibaca"
@@ -151,7 +154,7 @@ function completeBook(bookId) {
     const bookTarget = findBook(bookId)
     if (bookTarget == null) return;
 
-    bookTarget.isRead = true;
+    bookTarget.isComplete = true;
     document.dispatchEvent(new Event(RENDER_BOOK))
     saveBook()
 }
@@ -160,7 +163,7 @@ function incompleteBook(bookId) {
     const bookTarget = findBook(bookId)
     if (bookTarget == null) return;
 
-    bookTarget.isRead = false;
+    bookTarget.isComplete = false;
     document.dispatchEvent(new Event(RENDER_BOOK))
     saveBook()
 }
@@ -231,7 +234,7 @@ function searchBook() {
     for (const bookItem of books) {
         if (bookItem.title.toLowerCase().includes(searchTitle)) {
             const bookElement = makeBook(bookItem);
-            if (!bookItem.isRead) {
+            if (!bookItem.isComplete) {
                 incompleteBook.append(bookElement);
             } else {
                 completeBook.append(bookElement);
