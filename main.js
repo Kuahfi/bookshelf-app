@@ -1,11 +1,22 @@
 const books = [];
 const RENDER_BOOK = 'render-book';
 
+window.addEventListener("DOMContentLoaded", () => {
+    const submitForm = document.getElementById('bookForm');
+    submitForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        addBook();
+    })
+    if (isStorageExist()){
+        loadDataFromStorage();
+    }
+});
+
 function addBook() {
     const bookTitle = document.getElementById('bookFormTitle').value;
     const bookAuthor = document.getElementById('bookFormAuthor').value;
     const bookYear = parseInt(document.getElementById('bookFormYear').value);
-    const isRead = document.getElementById('bookFormIsComplete').checked; // ✅ FIX: Read checkbox state
+    const isRead = document.getElementById('bookFormIsComplete').checked;
 
     const generatedId = generateId();
     const bookObject = generateBookObject(generatedId, bookTitle, bookAuthor, bookYear, isRead);
@@ -266,14 +277,3 @@ function loadDataFromStorage(){
 
     document.dispatchEvent(new Event(RENDER_BOOK))
 }
-
-window.addEventListener("DOMContentLoaded", () => {
-    const submitForm = document.getElementById('bookForm');
-    submitForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        addBook();
-    })
-    if (isStorageExist()){
-        loadDataFromStorage();
-    }
-});
